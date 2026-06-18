@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Financial Accounting Crossword</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+.grid { display:grid; grid-template-columns:repeat(20,30px); gap:2px; }
+.cell { width:30px;height:30px;text-align:center;font-size:16px;text-transform:uppercase; }
+.black { background:black; }
+.correct { background:#c8f7c5; }
+.incorrect { background:#f7c5c5; }
+.number { position:absolute;font-size:9px;margin-top:-28px;margin-left:2px; }
+</style>
+</head>
+<body>
+<h2>Financial Accounting Crossword</h2>
+<div id="grid" class="grid"></div>
+<br>
+<button onclick="check()">Check Answers</button>
+<button onclick="resetPuzzle()">Reset</button>
+<p id="score"></p>
+<h3>Across</h3>
+<ol id="across"></ol>
+<h3>Down</h3>
+<ol id="down"></ol>
+<script>
+const words=[
+{answer:"ASSET", clue:"Economic resource owned by a business", r:0,c:0,dir:"across"},
+{answer:"LIABILITY", clue:"Obligation requiring payment", r:0,c:2,dir:"down"},
+{answer:"EQUITY", clue:"Owner’s residual interest", r:2,c:0,dir:"across"},
+{answer:"REVENUE", clue:"Inflows from providing goods/services", r:4,c:0,dir:"across"},
+{answer:"EXPENSE", clue:"Costs incurred to generate revenue", r:6,c:0,dir:"across"},
+{answer:"ACCOUNTINGEQUATION", clue:"Assets = Liabilities + Equity", r:8,c:0,dir:"across"},
+{answer:"BALANCESHEET", clue:"Financial position at a point in time", r:10,c:0,dir:"across"},
+{answer:"INCOMESTATEMENT", clue:"Shows revenues and expenses", r:12,c:0,dir:"across"},
+{answer:"DEBIT", clue:"Left side entry", r:2,c:5,dir:"down"},
+{answer:"CREDIT", clue:"Right side entry", r:2,c:7,dir:"down"},
+{answer:"NETINCOME", clue:"Profit after all expenses", r:14,c:0,dir:"across"},
+{answer:"DIVIDENDS", clue:"Payments to shareholders", r:4,c:10,dir:"down"},
+{answer:"COGS", clue:"Cost of goods sold", r:6,c:12,dir:"down"},
+{answer:"TRIALBALANCE", clue:"List of all accounts and balances", r:0,c:12,dir:"down"},
+{answer:"RETAINEDEARNINGS", clue:"Accumulated profits kept", r:6,c:8,dir:"down"},
+{answer:"AMORTIZATION", clue:"Allocation of intangible asset cost", r:10,c:5,dir:"down"},
+{answer:"DEPRECIATION", clue:"Allocation of tangible asset cost", r:12,c:8,dir:"down"},
+{answer:"UNEARNEDREVENUE", clue:"Cash received before earned", r:16,c:0,dir:"across"},
+{answer:"PREPAIDEXPENSES", clue:"Expenses paid in advance", r:18,c:0,dir:"across"},
+{answer:"GROSSPROFIT", clue:"Revenue minus cost of goods sold", r:14,c:5,dir:"down"}
+];
+const size=20;
+let grid=Array.from({length:size},()=>Array(size).fill(null));
+words.forEach(w=>{
+ for(let i=0;i<w.answer.length;i++){
+  if(w.dir=="across"){grid[w.r][w.c+i]={letter:w.answer[i],num:null};}
+  else{grid[w.r+i][w.c]={letter:w.answer[i],num:null};}
+ }
+});
+let count=1;
+words.forEach(w=>{grid[w.r][w.c].num=count++;});
+let html="";
+for(let r=0;r<size;r++){
+ for(let c=0;c<size;c++){
+  if(grid[r][c]){
+   let n=grid[r][c].num?`<div class="number">${grid[r][c].num}</div>`:"";
+   html+=`<div style="position:relative">${n}<input class="cell" maxlength="1" data-answer="${grid[r][c].letter}"></div>`;
+  } else {
+   html+=`<div class="cell black"></div>`;
+  }
+ }
+}
+document.getElementById("grid").innerHTML=html;
+let a="",d="";
+words.forEach((w,i)=>{
+ let text=`<li>${i+1}. ${w.clue}</li>`;
+ w.dir==="across"?a+=text:d+=text;
+});
+document.getElementById("across").innerHTML=a;
+document.getElementById("down").innerHTML=d;
+function check(){
+ let cells=document.querySelectorAll("input");
+ let correct=0;
+ cells.forEach(cell=>{
+  if(cell.value.toUpperCase()===cell.dataset.answer){cell.classList.add("correct");correct++;}
+  else{cell.classList.add("incorrect");}
+ });
+ document.getElementById("score").innerText="Score: "+correct+"/"+cells.length;
+}
+function resetPuzzle(){
+ let cells=document.querySelectorAll("input");
+ cells.forEach(cell=>{cell.value="";cell.classList.remove("correct","incorrect");});
+ document.getElementById("score").innerText="";
+}
+</script>
+</body>
+</html>
