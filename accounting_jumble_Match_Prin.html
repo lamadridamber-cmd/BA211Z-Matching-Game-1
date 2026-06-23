@@ -6,12 +6,7 @@
 <title>Accounting Jumble</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: Georgia, serif;
-    background: #f4f4f4;
-    padding: 20px;
-  }
+  body { font-family: Georgia, serif; background: #f4f4f4; padding: 20px; }
 
   .puzzle-container {
     max-width: 720px;
@@ -43,7 +38,6 @@
     text-transform: uppercase;
   }
 
-  /* ── Cartoon ── */
   .cartoon-box {
     border: 2px solid #222;
     margin-bottom: 16px;
@@ -63,7 +57,6 @@
     line-height: 1.5;
   }
 
-  /* ── Instructions ── */
   .instructions {
     font-family: Arial, sans-serif;
     font-size: 13px;
@@ -73,12 +66,19 @@
     font-style: italic;
   }
 
-  /* ── Word puzzles ── */
+  .score-area {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+
   .words-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 16px;
+    gap: 18px;
+    margin-bottom: 20px;
   }
 
   .word-section {
@@ -86,6 +86,15 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+
+  .word-section.solved-section {
+    background: #f0faf0;
+    border-color: #27ae60;
   }
 
   .word-label {
@@ -96,11 +105,7 @@
     text-transform: uppercase;
   }
 
-  /* Scrambled letter tiles */
-  .scrambled-row {
-    display: flex;
-    gap: 3px;
-  }
+  .scrambled-row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
 
   .scram-tile {
     width: 30px;
@@ -116,22 +121,18 @@
     color: #111;
     cursor: pointer;
     user-select: none;
+    border-radius: 3px;
     transition: background 0.15s;
   }
   .scram-tile:hover { background: #ffe98a; }
   .scram-tile.used {
     background: #ddd;
-    color: #aaa;
+    color: #bbb;
     cursor: default;
+    border-color: #bbb;
   }
 
-  /* Answer input row */
-  .answer-row {
-    display: flex;
-    gap: 3px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  .answer-row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
 
   .ans-cell {
     width: 30px;
@@ -142,32 +143,30 @@
     font-size: 17px;
     font-weight: 900;
     font-family: 'Arial Black', Arial, sans-serif;
-    color: #111;
+    color: #1a5fa8;
     cursor: pointer;
+    user-select: none;
     position: relative;
   }
-
-  /* Plain underline cell */
-  .ans-cell.plain {
-    border-bottom: 2.5px solid #333;
-  }
-
-  /* Circled cell */
-  .ans-cell.circled {
-    border: 2.5px solid #111;
-    border-radius: 50%;
-  }
-
-  .ans-cell.filled { color: #1a5fa8; }
+  .ans-cell.plain { border-bottom: 2.5px solid #333; }
+  .ans-cell.circled { border: 2.5px solid #111; border-radius: 50%; }
+  .ans-cell.empty-cell { color: transparent; cursor: default; }
   .ans-cell.filled:hover { color: #c0392b; }
 
-  /* ── Final answer section ── */
+  .word-status {
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #888;
+    min-height: 16px;
+  }
+  .word-status.solved { color: #27ae60; font-weight: 700; }
+
+  /* Final answer */
   .answer-section {
     border: 2px solid #222;
     padding: 14px;
     background: #fffdf5;
   }
-
   .answer-section-title {
     font-size: 11px;
     letter-spacing: 2px;
@@ -177,31 +176,65 @@
     margin-bottom: 6px;
     text-align: center;
   }
-
   .answer-clue {
     font-size: 13px;
     font-style: italic;
     font-family: Arial, sans-serif;
     color: #222;
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     line-height: 1.5;
   }
 
+  /* Circled letters pool */
+  .pool-area {
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .pool-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: Arial, sans-serif;
+    color: #888;
+    margin-bottom: 6px;
+  }
+  .pool-row { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+  .pool-tile {
+    width: 30px;
+    height: 30px;
+    border: 2.5px solid #111;
+    border-radius: 50%;
+    background: #eef4fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 900;
+    font-family: 'Arial Black', Arial, sans-serif;
+    color: #1a5fa8;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .pool-tile:hover { background: #ffe98a; }
+  .pool-tile.used {
+    background: #ddd;
+    color: #bbb;
+    cursor: default;
+    border-color: #bbb;
+  }
+
+  /* Final blanks */
   .final-answer-area {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 14px;
   }
-
-  .final-word {
-    display: flex;
-    gap: 3px;
-  }
-
+  .final-word { display: flex; gap: 4px; }
   .final-cell {
     width: 28px;
     height: 28px;
@@ -216,18 +249,18 @@
     color: #1a5fa8;
     background: #eef4fc;
     cursor: pointer;
+    user-select: none;
+    min-width: 28px;
   }
-  .final-cell:hover { background: #fdecea; color: #c0392b; }
-  .final-cell.empty { background: white; color: transparent; }
+  .final-cell.empty { background: white; color: transparent; cursor: default; }
+  .final-cell.filled:hover { background: #fdecea; color: #c0392b; }
 
-  /* ── Buttons ── */
   .btn-row {
     display: flex;
     justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
   }
-
   button {
     padding: 7px 20px;
     font-size: 12px;
@@ -244,10 +277,9 @@
   button.primary { background: #2c3e50; color: white; border-color: #2c3e50; }
   button.primary:hover { background: #1a252f; }
 
-  /* ── Feedback ── */
   .feedback {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
     font-family: Arial, sans-serif;
     font-size: 14px;
     font-weight: 700;
@@ -255,93 +287,57 @@
   }
   .feedback.correct { color: #27ae60; }
   .feedback.incorrect { color: #c0392b; }
-  .feedback.reveal { color: #2c3e50; letter-spacing: 2px; font-size: 18px; }
+  .feedback.reveal { color: #2c3e50; letter-spacing: 3px; font-size: 18px; }
 
-  /* ── Score ── */
-  .score-area {
-    text-align: center;
-    font-family: Arial, sans-serif;
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 10px;
-  }
-
-  .word-status {
-    font-size: 11px;
-    font-family: Arial, sans-serif;
-    color: #888;
-    margin-top: 2px;
-  }
-  .word-status.solved { color: #27ae60; font-weight: 700; }
-
-  /* Responsive */
   @media (max-width: 500px) {
     .words-grid { grid-template-columns: 1fr; }
-    .scram-tile, .ans-cell { width: 26px; height: 26px; font-size: 14px; }
+    .scram-tile, .ans-cell { width: 24px; height: 24px; font-size: 13px; }
     .puzzle-title { font-size: 20px; letter-spacing: 2px; }
   }
 </style>
 </head>
 <body>
-
 <div class="puzzle-container">
 
   <div class="puzzle-title">ACCOUNTING JUMBLE</div>
   <div class="puzzle-subtitle">That Scrambled Word Game</div>
 
-  <!-- ── Cartoon ── -->
+  <!-- Cartoon -->
   <div class="cartoon-box">
     <svg class="cartoon-svg" viewBox="0 0 640 255" xmlns="http://www.w3.org/2000/svg">
       <rect width="640" height="255" fill="#fffdf5"/>
       <line x1="30" y1="220" x2="610" y2="220" stroke="#bbb" stroke-width="1" stroke-dasharray="4,4"/>
-
-      <!-- Legs -->
       <rect x="183" y="180" width="14" height="36" rx="5" fill="#2c3e50" stroke="#222" stroke-width="1"/>
       <rect x="203" y="180" width="14" height="36" rx="5" fill="#2c3e50" stroke="#222" stroke-width="1"/>
-      <!-- Shoes -->
       <ellipse cx="190" cy="218" rx="11" ry="5" fill="#111" stroke="#222" stroke-width="1"/>
       <ellipse cx="210" cy="218" rx="11" ry="5" fill="#111" stroke="#222" stroke-width="1"/>
-      <!-- Skirt -->
       <path d="M176,152 Q176,182 182,182 L218,182 Q224,182 224,152 Z" fill="#7f8c8d" stroke="#222" stroke-width="1.2"/>
-      <!-- Jacket -->
       <rect x="174" y="114" width="52" height="42" rx="6" fill="#2c3e50" stroke="#222" stroke-width="1.2"/>
       <polygon points="200,116 190,134 200,129" fill="#fff" stroke="#222" stroke-width="1"/>
       <polygon points="200,116 210,134 200,129" fill="#fff" stroke="#222" stroke-width="1"/>
       <rect x="196" y="129" width="8" height="18" fill="#ecf0f1"/>
-      <!-- Left arm -->
       <path d="M174,124 Q148,132 138,149" stroke="#2c3e50" stroke-width="13" stroke-linecap="round" fill="none"/>
       <ellipse cx="136" cy="152" rx="9" ry="8" fill="#f0c8a0" stroke="#222" stroke-width="1"/>
-      <!-- Right arm -->
       <path d="M226,124 Q252,116 265,104" stroke="#2c3e50" stroke-width="13" stroke-linecap="round" fill="none"/>
       <ellipse cx="267" cy="102" rx="9" ry="8" fill="#f0c8a0" stroke="#222" stroke-width="1"/>
       <line x1="271" y1="98" x2="282" y2="88" stroke="#f0c8a0" stroke-width="5" stroke-linecap="round"/>
-      <!-- Neck -->
       <rect x="196" y="99" width="12" height="16" rx="4" fill="#f0c8a0" stroke="#222" stroke-width="1"/>
-      <!-- Head -->
       <ellipse cx="202" cy="84" rx="26" ry="28" fill="#f0c8a0" stroke="#222" stroke-width="1.5"/>
-      <!-- Hair -->
       <ellipse cx="202" cy="60" rx="24" ry="11" fill="#3d2b1f" stroke="#222" stroke-width="1"/>
       <path d="M178,64 Q172,84 176,104" stroke="#3d2b1f" stroke-width="10" stroke-linecap="round" fill="none"/>
       <path d="M226,64 Q232,84 228,104" stroke="#3d2b1f" stroke-width="10" stroke-linecap="round" fill="none"/>
       <rect x="178" y="60" width="48" height="12" fill="#3d2b1f"/>
-      <!-- Glasses -->
       <rect x="188" y="79" width="11" height="8" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
       <rect x="203" y="79" width="11" height="8" rx="3" fill="none" stroke="#555" stroke-width="1.5"/>
       <line x1="199" y1="83" x2="203" y2="83" stroke="#555" stroke-width="1.5"/>
       <line x1="188" y1="83" x2="184" y2="82" stroke="#555" stroke-width="1.5"/>
       <line x1="214" y1="83" x2="218" y2="82" stroke="#555" stroke-width="1.5"/>
-      <!-- Eyes -->
       <circle cx="193" cy="83" r="2" fill="#3d2b1f"/>
       <circle cx="208" cy="83" r="2" fill="#3d2b1f"/>
-      <!-- Eyebrows -->
       <path d="M189,77 Q193,75 197,77" stroke="#3d2b1f" stroke-width="1.5" fill="none"/>
       <path d="M204,77 Q208,75 212,77" stroke="#3d2b1f" stroke-width="1.5" fill="none"/>
-      <!-- Smile -->
       <path d="M196,93 Q202,99 208,93" stroke="#c0856a" stroke-width="1.5" fill="none"/>
-      <!-- Earring -->
       <circle cx="176" cy="88" r="3" fill="#f1c40f" stroke="#e6a800" stroke-width="1"/>
-
-      <!-- Tablet -->
       <rect x="100" y="142" width="72" height="48" rx="4" fill="#ecf0f1" stroke="#222" stroke-width="1.5"/>
       <rect x="104" y="146" width="64" height="38" rx="2" fill="#fff" stroke="#ccc" stroke-width="1"/>
       <rect x="104" y="146" width="64" height="12" rx="2" fill="#e74c3c"/>
@@ -354,21 +350,15 @@
       <text x="151" y="176" text-anchor="middle" font-family="Arial" font-size="5" fill="#555">Sam, 31</text>
       <rect x="112" y="182" width="44" height="8" rx="3" fill="#e74c3c"/>
       <text x="134" y="188" text-anchor="middle" font-family="Arial" font-weight="700" font-size="6" fill="white">MATCH!</text>
-
-      <!-- Speech bubble -->
       <rect x="295" y="22" width="310" height="90" rx="12" fill="white" stroke="#222" stroke-width="1.8"/>
       <polygon points="310,112 292,126 328,112" fill="white" stroke="#222" stroke-width="1.8"/>
       <polygon points="312,112 326,112 319,112" fill="white"/>
       <text x="450" y="50" text-anchor="middle" font-family="Arial" font-style="italic" font-size="14.5" fill="#222">I only make matches when</text>
       <text x="450" y="70" text-anchor="middle" font-family="Arial" font-style="italic" font-size="14.5" fill="#222">romance begins &#8212; not when</text>
       <text x="450" y="90" text-anchor="middle" font-family="Arial" font-style="italic" font-size="14.5" fill="#222">the check clears!</text>
-
-      <!-- Hearts -->
       <text x="270" y="80" font-size="16" fill="#e74c3c" opacity="0.7">&#9829;</text>
       <text x="285" y="58" font-size="11" fill="#e74c3c" opacity="0.5">&#9829;</text>
       <text x="258" y="52" font-size="8" fill="#e74c3c" opacity="0.4">&#9829;</text>
-
-      <!-- Calendar -->
       <rect x="480" y="145" width="112" height="78" rx="4" fill="white" stroke="#222" stroke-width="1.5"/>
       <rect x="480" y="145" width="112" height="18" rx="4" fill="#2c3e50" stroke="#222" stroke-width="1.5"/>
       <text x="536" y="158" text-anchor="middle" font-family="Arial" font-weight="700" font-size="9" fill="white">PERIOD START</text>
@@ -385,24 +375,30 @@
     </div>
   </div>
 
-  <!-- ── Instructions ── -->
-  <p class="instructions">Unscramble each word. Click a scrambled letter to place it in the next blank. Click a placed letter to return it. Circled letters form the final answer!</p>
+  <p class="instructions">
+    Unscramble each word. Click a scrambled letter to place it in the next blank &mdash; click a placed letter to return it.<br>
+    Once all words are solved, use the circled letters (in any order) to spell the final answer!
+  </p>
 
-  <div class="score-area" id="scoreArea">Words solved: <span id="solvedCount">0</span> / 7</div>
+  <div class="score-area">Words solved: <span id="solvedCount">0</span> / 7</div>
 
-  <!-- ── Word puzzles ── -->
   <div class="words-grid" id="wordsGrid"></div>
 
-  <!-- ── Final answer ── -->
+  <!-- Final answer -->
   <div class="answer-section">
-    <div class="answer-section-title">Now arrange the circled letters to form the answer:</div>
-    <div class="answer-clue">"When expenses are recognized in the same period as the revenue they generate, accountants call this the..."</div>
+    <div class="answer-section-title">Arrange the circled letters to form the answer:</div>
+    <div class="answer-clue">"When expenses are recognized in the same period as the revenue they help generate, accountants call this the&hellip;"</div>
+
+    <div class="pool-area">
+      <div class="pool-label">Circled letters available &mdash; click to place in answer below</div>
+      <div class="pool-row" id="poolRow"></div>
+    </div>
 
     <div class="final-answer-area" id="finalAnswerArea"></div>
 
     <div class="btn-row">
       <button onclick="checkFinalAnswer()">Check Answer</button>
-      <button onclick="resetFinalAnswer()">Clear Final Answer</button>
+      <button onclick="clearFinalAnswer()">Clear Answer</button>
       <button class="primary" onclick="revealAll()">Reveal All</button>
     </div>
     <div class="feedback" id="finalFeedback"></div>
@@ -411,206 +407,209 @@
 </div>
 
 <script>
-// ── Puzzle data ──
-const WORDS = [
+// ── Data ──
+var WORDS = [
   { word: "ACCOUNTS",  scrambled: "OCSTCANU", circled: [2,6]   },
   { word: "REVENUE",   scrambled: "UENREVE",  circled: [1,2,5] },
   { word: "BALANCE",   scrambled: "CLENABA",  circled: [3,6]   },
   { word: "PREPAID",   scrambled: "DRPIAPE",  circled: [1,4,6] },
   { word: "AMORTIZE",  scrambled: "ZETAMIRO", circled: [2,5]   },
   { word: "CASH",      scrambled: "HACS",     circled: [2,4]   },
-  { word: "BUILDINGS", scrambled: "GUILDSNIB",circled: [3,8]   },
+  { word: "BUILDINGS", scrambled: "GUILDSNIB",circled: [3,6,8] }
 ];
 
-// Final answer words and which positions are in the answer blanks
-const FINAL_WORDS = ["MATCHING", "PRINCIPLE"];
-const FINAL_ANSWER = "MATCHINGPRINCIPLE";
+var FINAL_WORDS  = ["MATCHING", "PRINCIPLE"];
+var FINAL_ANSWER = "MATCHINGPRINCIPLE"; // 17 letters
 
-// State per word: which scrambled indices have been used, and what's in each answer slot
-const state = WORDS.map(pw => ({
-  usedScram: new Array(pw.scrambled.length).fill(false),
-  answerSlots: new Array(pw.word.length).fill(null), // null or {letter, scramIdx}
-  solved: false
-}));
-
-// Final answer state: array of letters placed (null = empty)
-const finalState = {
-  slots: new Array(FINAL_ANSWER.length).fill(null)
-};
-
-let solvedCount = 0;
-
-// Build the circled letters pool in order (word by word, circled position order)
-// Returns array of {letter, wordIdx, slotIdx}
-function getCircledPool() {
-  const pool = [];
-  WORDS.forEach((pw, wi) => {
-    pw.circled.forEach(pos => {
-      const slotIdx = pos - 1;
-      pool.push({ letter: pw.word[slotIdx], wordIdx: wi, slotIdx });
-    });
+// Build the ordered list of circled letters (used to populate the pool)
+// Each entry: { letter, wordIdx, posIdx }
+var CIRCLED_LETTERS = [];
+WORDS.forEach(function(pw, wi) {
+  pw.circled.forEach(function(pos) {
+    CIRCLED_LETTERS.push({ letter: pw.word[pos - 1], wordIdx: wi, posIdx: pos - 1 });
   });
-  return pool;
-}
+});
+// CIRCLED_LETTERS has 17 entries matching FINAL_ANSWER
 
-// ── Render word puzzles ──
-function renderAll() {
-  const grid = document.getElementById('wordsGrid');
+// ── State ──
+// Per-word: usedScram[si] = true/false, answerSlots[ai] = { letter, scramIdx } | null
+var wordState = WORDS.map(function(pw) {
+  return {
+    usedScram:   new Array(pw.scrambled.length).fill(false),
+    answerSlots: new Array(pw.word.length).fill(null),
+    solved:      false
+  };
+});
+
+// Pool: parallel to CIRCLED_LETTERS — true = available in pool, false = used in final answer
+// A letter only appears in the pool once its word is solved
+var poolAvailable = new Array(CIRCLED_LETTERS.length).fill(false);
+
+// Final answer slots: array of pool indices (or null)
+var finalSlots = new Array(FINAL_ANSWER.length).fill(null);
+
+var solvedCount = 0;
+
+// ── Render word grid (full redraw, stable) ──
+function renderWordGrid() {
+  var grid = document.getElementById('wordsGrid');
   grid.innerHTML = '';
-  WORDS.forEach((pw, wi) => renderWord(pw, wi, grid));
-  renderFinalAnswer();
-  updateScore();
-}
+  WORDS.forEach(function(pw, wi) {
+    var section = document.createElement('div');
+    section.className = 'word-section' + (wordState[wi].solved ? ' solved-section' : '');
 
-function renderWord(pw, wi, grid) {
-  const section = document.createElement('div');
-  section.className = 'word-section';
-  section.id = `word-section-${wi}`;
+    var label = document.createElement('div');
+    label.className = 'word-label';
+    label.textContent = 'Unscramble';
+    section.appendChild(label);
 
-  const label = document.createElement('div');
-  label.className = 'word-label';
-  label.textContent = 'Unscramble';
-  section.appendChild(label);
+    // Scrambled row
+    var scramRow = document.createElement('div');
+    scramRow.className = 'scrambled-row';
+    pw.scrambled.split('').forEach(function(ch, si) {
+      var tile = document.createElement('div');
+      tile.className = 'scram-tile' + (wordState[wi].usedScram[si] ? ' used' : '');
+      tile.textContent = ch;
+      if (!wordState[wi].usedScram[si] && !wordState[wi].solved) {
+        tile.addEventListener('click', makeScramHandler(wi, si));
+      }
+      scramRow.appendChild(tile);
+    });
+    section.appendChild(scramRow);
 
-  // Scrambled row
-  const scramRow = document.createElement('div');
-  scramRow.className = 'scrambled-row';
-  pw.scrambled.split('').forEach((ch, si) => {
-    const tile = document.createElement('div');
-    tile.className = 'scram-tile' + (state[wi].usedScram[si] ? ' used' : '');
-    tile.textContent = ch;
-    tile.dataset.wi = wi;
-    tile.dataset.si = si;
-    if (!state[wi].usedScram[si] && !state[wi].solved) {
-      tile.addEventListener('click', onScramClick);
-    }
-    scramRow.appendChild(tile);
+    // Answer row
+    var ansRow = document.createElement('div');
+    ansRow.className = 'answer-row';
+    pw.word.split('').forEach(function(_, ai) {
+      var pos = ai + 1;
+      var isCircled = pw.circled.indexOf(pos) !== -1;
+      var cell = document.createElement('div');
+      var classes = 'ans-cell ' + (isCircled ? 'circled' : 'plain');
+      var filled = wordState[wi].answerSlots[ai];
+      if (filled) {
+        classes += ' filled';
+        cell.textContent = filled.letter;
+        if (!wordState[wi].solved) {
+          cell.addEventListener('click', makeAnsHandler(wi, ai));
+        }
+      } else {
+        classes += ' empty-cell';
+      }
+      cell.className = classes;
+      ansRow.appendChild(cell);
+    });
+    section.appendChild(ansRow);
+
+    // Status
+    var status = document.createElement('div');
+    status.className = 'word-status' + (wordState[wi].solved ? ' solved' : '');
+    status.textContent = wordState[wi].solved ? '✓ Correct!' : '';
+    section.appendChild(status);
+
+    grid.appendChild(section);
   });
-  section.appendChild(scramRow);
+}
 
-  // Answer row
-  const ansRow = document.createElement('div');
-  ansRow.className = 'answer-row';
-  pw.word.split('').forEach((_, ai) => {
-    const pos = ai + 1;
-    const isCircled = pw.circled.includes(pos);
-    const cell = document.createElement('div');
-    cell.className = 'ans-cell ' + (isCircled ? 'circled' : 'plain');
-    cell.dataset.wi = wi;
-    cell.dataset.ai = ai;
-    const filled = state[wi].answerSlots[ai];
-    if (filled) {
-      cell.textContent = filled.letter;
-      cell.classList.add('filled');
-      if (!state[wi].solved) cell.addEventListener('click', onAnsClick);
+function makeScramHandler(wi, si) {
+  return function() {
+    if (wordState[wi].usedScram[si] || wordState[wi].solved) return;
+    var emptyIdx = wordState[wi].answerSlots.indexOf(null);
+    if (emptyIdx === -1) return;
+    wordState[wi].answerSlots[emptyIdx] = { letter: WORDS[wi].scrambled[si], scramIdx: si };
+    wordState[wi].usedScram[si] = true;
+    // Check if complete
+    if (wordState[wi].answerSlots.indexOf(null) === -1) {
+      checkWord(wi);
     }
-    ansRow.appendChild(cell);
-  });
-  section.appendChild(ansRow);
-
-  // Status
-  const status = document.createElement('div');
-  status.className = 'word-status' + (state[wi].solved ? ' solved' : '');
-  status.id = `word-status-${wi}`;
-  status.textContent = state[wi].solved ? '✓ Correct!' : '';
-  section.appendChild(status);
-
-  grid.appendChild(section);
+    renderWordGrid();
+  };
 }
 
-function onScramClick(e) {
-  const wi = +e.target.dataset.wi;
-  const si = +e.target.dataset.si;
-  if (state[wi].usedScram[si] || state[wi].solved) return;
-  const letter = WORDS[wi].scrambled[si];
-  // Find first empty answer slot
-  const emptyIdx = state[wi].answerSlots.indexOf(null);
-  if (emptyIdx === -1) return;
-  state[wi].answerSlots[emptyIdx] = { letter, scramIdx: si };
-  state[wi].usedScram[si] = true;
-  // Check if word is complete
-  if (!state[wi].answerSlots.includes(null)) {
-    checkWordAnswer(wi);
-  }
-  refreshWord(wi);
+function makeAnsHandler(wi, ai) {
+  return function() {
+    if (wordState[wi].solved) return;
+    var filled = wordState[wi].answerSlots[ai];
+    if (!filled) return;
+    wordState[wi].usedScram[filled.scramIdx] = false;
+    wordState[wi].answerSlots[ai] = null;
+    renderWordGrid();
+  };
 }
 
-function onAnsClick(e) {
-  const wi = +e.target.dataset.wi;
-  const ai = +e.target.dataset.ai;
-  if (state[wi].solved) return;
-  const filled = state[wi].answerSlots[ai];
-  if (!filled) return;
-  state[wi].usedScram[filled.scramIdx] = false;
-  state[wi].answerSlots[ai] = null;
-  refreshWord(wi);
-}
-
-function checkWordAnswer(wi) {
-  const answer = state[wi].answerSlots.map(s => s ? s.letter : '').join('');
+function checkWord(wi) {
+  var answer = wordState[wi].answerSlots.map(function(s) { return s ? s.letter : ''; }).join('');
   if (answer === WORDS[wi].word) {
-    state[wi].solved = true;
+    wordState[wi].solved = true;
     solvedCount++;
-    updateScore();
-    // Push circled letters into final answer
-    pushCircledToFinal(wi);
-    refreshFinalAnswer();
+    document.getElementById('solvedCount').textContent = solvedCount;
+    // Make this word's circled letters available in the pool
+    CIRCLED_LETTERS.forEach(function(cl, ci) {
+      if (cl.wordIdx === wi) poolAvailable[ci] = true;
+    });
+    renderPool();
   }
 }
 
-function pushCircledToFinal(wi) {
-  // Determine which slot in finalState these circled letters belong to
-  // by counting how many circled letters came before this word
-  let offset = 0;
-  for (let i = 0; i < wi; i++) {
-    offset += WORDS[i].circled.length;
-  }
-  WORDS[wi].circled.forEach((pos, ci) => {
-    const letter = WORDS[wi].word[pos - 1];
-    finalState.slots[offset + ci] = letter;
+// ── Pool ──
+function renderPool() {
+  var row = document.getElementById('poolRow');
+  row.innerHTML = '';
+  CIRCLED_LETTERS.forEach(function(cl, ci) {
+    var tile = document.createElement('div');
+    // Determine if this pool slot is used in the final answer
+    var usedInFinal = finalSlots.indexOf(ci) !== -1;
+    if (!poolAvailable[ci]) {
+      // Word not yet solved — show placeholder
+      tile.className = 'pool-tile used';
+      tile.textContent = '?';
+    } else if (usedInFinal) {
+      tile.className = 'pool-tile used';
+      tile.textContent = cl.letter;
+    } else {
+      tile.className = 'pool-tile';
+      tile.textContent = cl.letter;
+      tile.addEventListener('click', makePoolHandler(ci));
+    }
+    row.appendChild(tile);
   });
 }
 
-function refreshWord(wi) {
-  const grid = document.getElementById('wordsGrid');
-  const existing = document.getElementById(`word-section-${wi}`);
-  if (existing) existing.remove();
-  // Re-insert at correct position
-  const sections = grid.querySelectorAll('.word-section');
-  const refNode = sections[wi] || null;
-  const tempGrid = document.createElement('div');
-  renderWord(WORDS[wi], wi, tempGrid);
-  const newSection = tempGrid.firstChild;
-  newSection.id = `word-section-${wi}`;
-  grid.insertBefore(newSection, refNode || null);
-  if (refNode) grid.removeChild(refNode);
-  updateScore();
-}
-
-function updateScore() {
-  document.getElementById('solvedCount').textContent = solvedCount;
+function makePoolHandler(ci) {
+  return function() {
+    if (finalSlots.indexOf(ci) !== -1) return; // already used
+    var emptyIdx = finalSlots.indexOf(null);
+    if (emptyIdx === -1) return;
+    finalSlots[emptyIdx] = ci;
+    renderPool();
+    renderFinalAnswer();
+  };
 }
 
 // ── Final answer ──
 function renderFinalAnswer() {
-  const area = document.getElementById('finalAnswerArea');
+  var area = document.getElementById('finalAnswerArea');
   area.innerHTML = '';
-  let globalIdx = 0;
-  FINAL_WORDS.forEach((w, wi) => {
+  var globalIdx = 0;
+  FINAL_WORDS.forEach(function(w, wi) {
     if (wi > 0) {
-      const spacer = document.createElement('div');
-      spacer.style.width = '14px';
+      var spacer = document.createElement('div');
+      spacer.style.cssText = 'width:16px;display:flex;align-items:center;justify-content:center;font-family:Arial;font-size:13px;color:#999;';
+      spacer.textContent = '/';
       area.appendChild(spacer);
     }
-    const wordDiv = document.createElement('div');
+    var wordDiv = document.createElement('div');
     wordDiv.className = 'final-word';
-    w.split('').forEach((_, li) => {
-      const cell = document.createElement('div');
-      cell.className = 'final-cell' + (finalState.slots[globalIdx] ? '' : ' empty');
-      cell.dataset.idx = globalIdx;
-      cell.textContent = finalState.slots[globalIdx] || '';
-      if (finalState.slots[globalIdx]) {
-        cell.addEventListener('click', onFinalCellClick);
+    w.split('').forEach(function(_, li) {
+      var idx = globalIdx;
+      var cell = document.createElement('div');
+      var poolIdx = finalSlots[idx];
+      if (poolIdx !== null) {
+        cell.className = 'final-cell filled';
+        cell.textContent = CIRCLED_LETTERS[poolIdx].letter;
+        cell.addEventListener('click', makeFinalCellHandler(idx));
+      } else {
+        cell.className = 'final-cell empty';
+        cell.textContent = '_';
       }
       wordDiv.appendChild(cell);
       globalIdx++;
@@ -619,26 +618,24 @@ function renderFinalAnswer() {
   });
 }
 
-function refreshFinalAnswer() {
-  renderFinalAnswer();
-  document.getElementById('finalFeedback').textContent = '';
-  document.getElementById('finalFeedback').className = 'feedback';
-}
-
-function onFinalCellClick(e) {
-  const idx = +e.target.dataset.idx;
-  finalState.slots[idx] = null;
-  refreshFinalAnswer();
+function makeFinalCellHandler(idx) {
+  return function() {
+    finalSlots[idx] = null;
+    renderPool();
+    renderFinalAnswer();
+    document.getElementById('finalFeedback').textContent = '';
+    document.getElementById('finalFeedback').className = 'feedback';
+  };
 }
 
 function checkFinalAnswer() {
-  const answer = finalState.slots.map(s => s || '').join('');
-  const fb = document.getElementById('finalFeedback');
-  if (answer.length < FINAL_ANSWER.length) {
+  var fb = document.getElementById('finalFeedback');
+  if (finalSlots.indexOf(null) !== -1) {
     fb.textContent = 'Keep going — not all letters are placed yet!';
     fb.className = 'feedback incorrect';
     return;
   }
+  var answer = finalSlots.map(function(ci) { return CIRCLED_LETTERS[ci].letter; }).join('');
   if (answer === FINAL_ANSWER) {
     fb.textContent = '🎉 Correct! The Matching Principle!';
     fb.className = 'feedback correct';
@@ -648,45 +645,63 @@ function checkFinalAnswer() {
   }
 }
 
-function resetFinalAnswer() {
-  // Only clear manually placed letters; keep auto-pushed ones from solved words
-  // For simplicity, clear all and re-push from solved words
-  finalState.slots = new Array(FINAL_ANSWER.length).fill(null);
-  WORDS.forEach((pw, wi) => {
-    if (state[wi].solved) pushCircledToFinal(wi);
-  });
-  refreshFinalAnswer();
+function clearFinalAnswer() {
+  finalSlots = new Array(FINAL_ANSWER.length).fill(null);
+  renderPool();
+  renderFinalAnswer();
+  document.getElementById('finalFeedback').textContent = '';
+  document.getElementById('finalFeedback').className = 'feedback';
 }
 
 function revealAll() {
-  // Solve all words
-  WORDS.forEach((pw, wi) => {
-    if (!state[wi].solved) {
-      // Fill answer slots with correct letters
-      pw.word.split('').forEach((ch, ai) => {
-        // Find this letter in scrambled
-        const si = pw.scrambled.split('').findIndex((sc, idx) => sc === ch && !state[wi].usedScram[idx]);
-        if (si !== -1) {
-          state[wi].answerSlots[ai] = { letter: ch, scramIdx: si };
-          state[wi].usedScram[si] = true;
+  // Solve all unsolved words
+  WORDS.forEach(function(pw, wi) {
+    if (!wordState[wi].solved) {
+      // Place letters in correct order by matching scrambled letters to word
+      var usedScramIdx = [];
+      pw.word.split('').forEach(function(ch, ai) {
+        for (var si = 0; si < pw.scrambled.length; si++) {
+          if (pw.scrambled[si] === ch && usedScramIdx.indexOf(si) === -1) {
+            wordState[wi].answerSlots[ai] = { letter: ch, scramIdx: si };
+            wordState[wi].usedScram[si] = true;
+            usedScramIdx.push(si);
+            break;
+          }
         }
       });
-      state[wi].solved = true;
+      wordState[wi].solved = true;
       solvedCount++;
-      pushCircledToFinal(wi);
+      CIRCLED_LETTERS.forEach(function(cl, ci) {
+        if (cl.wordIdx === wi) poolAvailable[ci] = true;
+      });
     }
   });
-  // Solve final answer
-  FINAL_ANSWER.split('').forEach((ch, i) => { finalState.slots[i] = ch; });
-  renderAll();
+  document.getElementById('solvedCount').textContent = solvedCount;
+
+  // Fill final answer in correct order
+  FINAL_ANSWER.split('').forEach(function(ch, idx) {
+    // Find a pool tile with this letter not yet used
+    for (var ci = 0; ci < CIRCLED_LETTERS.length; ci++) {
+      if (CIRCLED_LETTERS[ci].letter === ch && finalSlots.indexOf(ci) === -1) {
+        finalSlots[idx] = ci;
+        break;
+      }
+    }
+  });
+
+  renderWordGrid();
+  renderPool();
   renderFinalAnswer();
-  const fb = document.getElementById('finalFeedback');
+
+  var fb = document.getElementById('finalFeedback');
   fb.textContent = 'MATCHING PRINCIPLE';
   fb.className = 'feedback reveal';
 }
 
 // ── Init ──
-renderAll();
+renderWordGrid();
+renderPool();
+renderFinalAnswer();
 </script>
 </body>
 </html>
